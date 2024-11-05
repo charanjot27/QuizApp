@@ -1,0 +1,188 @@
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #fff;
+        }
+        .quiz-container {
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .question {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            animation: slideIn 1s ease-in-out;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 15px;
+            animation: fadeInUp 1s ease-in-out;
+        }
+        button {
+            background-color: #ff4081;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s, transform 0.3s;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #e73370;
+            transform: scale(1.05);
+        }
+        button:active {
+            transform: scale(0.95);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        .result {
+            font-size: 1.5em;
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeIn 1s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div id="question" class="question"></div>
+        <ul id="options" class="options"></ul>
+        <button id="nextBtn">Next Question</button>
+        <div id="result" class="result"></div>
+    </div>
+    <script>
+        const quizData = [
+            {
+                question: "What is the capital of France?",
+                options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+                answer: 2
+            },
+            {
+                question: "Which language is used for web development?",
+                options: ["Python", "JavaScript", "C++", "Swift"],
+                answer: 1
+            },
+            {
+                question: "What is 5 + 3?",
+                options: ["5", "8", "12", "15"],
+                answer: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const nextBtn = document.getElementById('nextBtn');
+        const resultEl = document.getElementById('result');
+
+        function loadQuestion() {
+            clearOptions();
+            const currentQuestion = quizData[currentQuestionIndex];
+            questionEl.textContent = currentQuestion.question;
+            currentQuestion.options.forEach((option, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<input type="radio" name="option" value="${index}" id="option${index}">
+                                <label for="option${index}">${option}</label>`;
+                optionsEl.appendChild(li);
+            });
+        }
+
+        function clearOptions() {
+            optionsEl.innerHTML = '';
+        }
+
+        function getSelectedOption() {
+            const options = document.getElementsByName('option');
+            for (let option of options) {
+                if (option.checked) {
+                    return parseInt(option.value);
+                }
+            }
+            return null;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            const selectedOption = getSelectedOption();
+            if (selectedOption === null) {
+                alert('Please select an option!');
+                return;
+            }
+
+            if (selectedOption === quizData[currentQuestionIndex].answer) {
+                score++;
+            }
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        });
+
+        function showResult() {
+            questionEl.style.display = 'none';
+            optionsEl.style.display = 'none';
+            nextBtn.style.display = 'none';
+            resultEl.textContent = `You scored ${score} out of ${quizData.length}!`;
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
